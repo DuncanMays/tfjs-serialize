@@ -1,3 +1,11 @@
+/**
+ * @file    main.js
+ *          Existing implementations to serialize tensorflowJS models cannot serialize training information, specifically the optimizer.
+ 			This library was created to do just that.
+ * @author  Ian Chew and Duncan Mays
+ * @date    Jan 2019
+ */
+
 //'use strict';
 
 let serialjs;

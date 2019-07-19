@@ -2,13 +2,14 @@
  * @file    main.js
  *          Used for training over the DCP network.
  *          Adapted from the tensorflow.js mnist-core example.
- * @author  Ian Chew
+ * @author  Ian Chew and Duncan Mays 
  * @date    Jan 2019
  */
+ 
 const tf = require('@tensorflow/tfjs');
 const tfserialize = require('./tfserialize');
 
-async function go() {
+async function main() {
 	const model = tf.sequential();
 
 	// Define a simple dense layer with 3 inputs and one output.
@@ -19,13 +20,6 @@ async function go() {
 	layer.setWeights([tf.tensor([[1],[2],[3]]),tf.tensor([0])]);
 
 	model.compile({optimizer: tf.train.adam(), loss: 'meanSquaredError', metrics: ['accuracy']})
-
-/*
-	// Create an IOHandler to use in model.save and model.load.
-	const handler = new SerializeIOHandler();
-
-	const results = await model.save(handler);
-*/
 
 	const serialized = await tfserialize.serialize(model);
 
@@ -41,11 +35,9 @@ async function go() {
 	const input = tf.tensor([[1,2,3]]);
 
 	const originalResult = await model.predict(input);
-
 	const loadedResult = await loadedModel.predict(input);
 
 	console.log ("Result from the original model: " + originalResult.arraySync());
-
 	console.log ("Result from the loaded model: " + loadedResult.arraySync());
 
 	console.log('now testing training ability')
@@ -56,8 +48,12 @@ async function go() {
 	await model.fit(data, labels)
 	await loadedModel.fit(data, labels)
 
-	console.log('training ability confirmed')
+	const trainedOrigionalResult = await model.predict(input);
+	const trainedLoadedResult = await loadedModel.predict(input);
+
+	console.log ("Result from the trained original model, should be different than it was before training: " + trainedOrigionalResult.arraySync());
+	console.log ("Result from the trained loaded model, should be different than it was before training: " +  trainedLoadedResult.arraySync());
 }
 
-go();
+main();
 
